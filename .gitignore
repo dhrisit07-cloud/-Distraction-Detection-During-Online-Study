@@ -1,0 +1,13 @@
+focusenv/
+__pycache__/
+*.pyc
+.env
+.next/
+node_modules/
+test_frame.jpg
+test_model.py
+test_request.py
+capture_test.py
+out.json
+test_*.png
+.DS_Store
