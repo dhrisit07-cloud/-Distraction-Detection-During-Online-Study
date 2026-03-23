@@ -41,12 +41,16 @@ options = FaceLandmarkerOptions(
 )
 landmarker = FaceLandmarker.create_from_options(options)
 
+global_frame_count = 0
+last_known_distractors = []
+
 @app.get("/api/health")
 def health():
     return {"status": "ok", "model_found": os.path.exists(MODEL_PATH)}
 
 @app.post("/api/process")
 async def process_frame(file: UploadFile = File(...)):
+    global global_frame_count, last_known_distractors
     # Read image
     contents = await file.read()
     nparr = np.frombuffer(contents, np.uint8)
@@ -72,7 +76,7 @@ async def process_frame(file: UploadFile = File(...)):
         # Head pose
         y, p, r = get_head_pose(lm, w, h)
         yaw, pitch = y or 0, p or 0
-        head_dist = abs(yaw) > 20 or abs(pitch) > 15
+        head_dist = abs(yaw) > 25 or abs(pitch) > 20
 
         # Gaze
         gaze_data = analyse_gaze(lm, w, h)
@@ -80,9 +84,14 @@ async def process_frame(file: UploadFile = File(...)):
         drowsy    = gaze_data["avg_ear"] < 0.20
 
     # Phone detection
-    detections = detect_distractors(frame, 0, model_path=YOLO_MODEL_PATH) or []
-    distractor_labels = [d["label"] for d in detections]
+    detections = detect_distractors(frame, global_frame_count, model_path=YOLO_MODEL_PATH)
+    if detections is not None:
+        last_known_distractors = detections
+        
+    distractor_labels = [d["label"] for d in last_known_distractors]
     phone_detected = "phone" in distractor_labels
+
+    global_frame_count += 1
 
     return {
         "head_distracted": bool(head_dist),

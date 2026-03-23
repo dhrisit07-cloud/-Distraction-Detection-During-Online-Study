@@ -27,9 +27,13 @@ export default function Home() {
     }
     setupCamera();
 
+    let isProcessing = false;
     let intervalId: any;
+    let distractedCount = 0;
+    let focusedCount = 0;
     function startInference() {
        intervalId = setInterval(async () => {
+        if (isProcessing) return;
         if (videoRef.current && canvasRef.current) {
           const video = videoRef.current;
           const canvas = canvasRef.current;
@@ -40,6 +44,7 @@ export default function Home() {
           const ctx = canvas.getContext("2d");
           if (ctx) {
             ctx.drawImage(video, 0, 0);
+            isProcessing = true;
             canvas.toBlob(async (blob) => {
               if (blob) {
                 const formData = new FormData();
@@ -53,20 +58,34 @@ export default function Home() {
                   const data = await res.json();
                   console.log("Inference result:", data);
                   setStats(data);
-                  if ((data.distractors && data.distractors.length > 0) || data.drowsy || data.head_distracted || data.gaze_distracted) {
-                    setStatus("DISTRACTION DETECTED");
+                  const isDistracted = (data.distractors && data.distractors.length > 0) || data.drowsy || data.head_distracted || data.gaze_distracted;
+                  
+                  if (isDistracted) {
+                    distractedCount++;
+                    focusedCount = 0;
+                    if (distractedCount >= 2) {
+                      setStatus("DISTRACTION DETECTED");
+                    }
                   } else {
-                    setStatus("FOCUSED");
+                    focusedCount++;
+                    distractedCount = 0;
+                    if (focusedCount >= 2) {
+                      setStatus("FOCUSED");
+                    }
                   }
                 } catch (e) {
                   console.error("Inference error:", e);
                   setStatus("BACKEND ERROR");
+                } finally {
+                  isProcessing = false;
                 }
+              } else {
+                isProcessing = false;
               }
             }, "image/jpeg", 0.5);
           }
         }
-      }, 500); // 2 fps for reliable debugging
+      }, 100); // 10 fps maximum, skip frames if backend is still processing
     }
 
     return () => clearInterval(intervalId);

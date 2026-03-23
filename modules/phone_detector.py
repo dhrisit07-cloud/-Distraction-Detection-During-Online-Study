@@ -5,7 +5,8 @@ import numpy as np
 # COCO class IDs for distractors
 # 67 = cell phone, 76 = scissors, 73 = book, 46 = banana (food example)
 DISTRACTOR_CLASSES = {
-    67: "phone",
+    65: "phone",  # remote (often confused with phone)
+    67: "phone",  # cell phone
     73: "book",
     76: "scissors",
     45: "bowl",
@@ -46,7 +47,8 @@ def detect_distractors(frame, frame_count, model_path="models/yolov8n.pt"):
         cls_id = int(box.cls[0])
         if cls_id in DISTRACTOR_CLASSES:
             conf  = float(box.conf[0])
-            if conf > 0.45:  # confidence threshold
+            thresh = 0.15 if cls_id in [65, 67] else 0.30
+            if conf > thresh:  # confidence threshold
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
                 detected.append({
                     "label":      DISTRACTOR_CLASSES[cls_id],
