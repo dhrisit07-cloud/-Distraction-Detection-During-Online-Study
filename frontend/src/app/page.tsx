@@ -81,10 +81,27 @@ function useFocusEngine() {
 export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [cameraStatus, setCameraStatus] = useState("Initializing...");
   const [stats, setStats] = useState<any>(null);
 
   const engine = useFocusEngine();
+
+  // Handle Distraction Audio Alert
+  useEffect(() => {
+    if (engine.isDistracted && engine.distractionSecs >= 5) {
+      if (audioRef.current && audioRef.current.paused) {
+        // Play sound if not already playing
+        audioRef.current.play().catch(e => console.error("Audio autoplay blocked:", e));
+      }
+    } else {
+      if (audioRef.current && !audioRef.current.paused) {
+        // Stop sound and reset when focused again
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    }
+  }, [engine.isDistracted, engine.distractionSecs]);
 
   // Nudge Messages
   const LNudges: Record<number, string> = {
@@ -234,6 +251,9 @@ export default function Home() {
     <main style={{ padding: "2rem", maxWidth: "1200px", margin: "0 auto", fontFamily: "sans-serif" }}>
       <h1 style={{ marginBottom: "0.5rem" }}>Focus Guardian 🎯</h1>
       <p style={{ color: "#aaa", marginBottom: "2rem" }}>Privacy-first distraction detection. Everything runs locally.</p>
+      
+      {/* Hidden Audio Element for Alerts */}
+      <audio ref={audioRef} src="/sound.mp4" loop />
       
       {!stats && cameraStatus !== "Running" && (
          <div style={{ padding: "1rem", backgroundColor: "#1e293b", borderRadius: "8px", marginBottom: "1rem" }}>
