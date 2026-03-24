@@ -18,7 +18,7 @@ DISTRACTOR_CLASSES = {
 }
 
 # Only run YOLO every N frames to save CPU
-YOLO_FRAME_INTERVAL = 5
+YOLO_FRAME_INTERVAL = 2
 
 _model = None
 

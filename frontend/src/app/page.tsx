@@ -178,7 +178,7 @@ export default function Home() {
               } else {
                 isProcessing = false;
               }
-            }, "image/jpeg", 0.5);
+            }, "image/jpeg", 0.9);
           }
         }
       }, 100);
@@ -188,20 +188,41 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); 
 
-  const NudgeComponent = ({ level }: { level: number }) => (
-    <div style={{
-      padding: "12px 20px",
-      borderRadius: "10px",
-      textAlign: "center",
-      fontSize: "18px",
-      fontWeight: 600,
-      margin: "8px 0",
-      backgroundColor: nudgeStyles[level].bg,
-      color: nudgeStyles[level].color
-    }}>
-      {LNudges[level]}
-    </div>
-  );
+  const NudgeComponent = ({ level }: { level: number }) => {
+    if (engine.isDistracted) {
+      const msg = level > 0 ? LNudges[level] : "Distracted";
+      const bg = level > 0 ? nudgeStyles[level].bg : "#3a0000";
+      const color = level > 0 ? nudgeStyles[level].color : "#f87171";
+      return (
+        <div style={{
+          padding: "12px 20px",
+          borderRadius: "10px",
+          textAlign: "center",
+          fontSize: "18px",
+          fontWeight: 600,
+          margin: "8px 0",
+          backgroundColor: bg,
+          color: color
+        }}>
+          {msg}
+        </div>
+      );
+    }
+    return (
+      <div style={{
+        padding: "12px 20px",
+        borderRadius: "10px",
+        textAlign: "center",
+        fontSize: "18px",
+        fontWeight: 600,
+        margin: "8px 0",
+        backgroundColor: nudgeStyles[0].bg,
+        color: nudgeStyles[0].color
+      }}>
+        {LNudges[0]}
+      </div>
+    );
+  };
 
   const Signal = ({ ok, label }: { ok: boolean, label: string }) => (
     <span style={{ color: ok ? "#4ade80" : "#f87171", fontWeight: 600, marginRight: "12px" }}>
