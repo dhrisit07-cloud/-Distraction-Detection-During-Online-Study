@@ -65,6 +65,7 @@ Built in **Next.js**, the live dashboard shows:
 <!-- 📸 SCREENSHOT: Side-by-side of the Green "Focused" banner vs the Red "Distracted" alert banner -->
 ![Alert Banners](screenshots/alert_banner1.png)
 ![Alert Banners](screenshots/alert_banner2.png)
+![Alert Banners](screenshots/alert_banner3.png)
 ---
 
 ## How It Works
