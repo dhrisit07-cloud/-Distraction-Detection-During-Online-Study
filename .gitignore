@@ -2,6 +2,7 @@ focusenv/
 __pycache__/
 *.pyc
 .env
+.env*.local
 .next/
 node_modules/
 test_frame.jpg

@@ -15,16 +15,26 @@ if errorlevel 1 (
 echo [2/4] Activating virtual environment...
 call focusenv\Scripts\activate.bat
 
-echo [3/4] Installing required packages...
-pip install mediapipe==0.10.11 opencv-python ultralytics streamlit numpy
+echo [3/4] Installing required Python packages...
+pip install -r requirements.txt
 
-echo [4/4] Verifying installation...
-python -c "import cv2; import mediapipe as mp; print('cv2:', cv2.__version__); print('mediapipe:', mp.__version__); print('All packages OK!')"
+echo [4/4] Installing Next.js frontend packages...
+cd frontend
+call npm install
+cd ..
 
 echo.
 echo ================================================
-echo  Setup complete! Run the app with:
-echo  focusenv\Scripts\activate
-echo  streamlit run ui\app.py
+echo  Setup complete! 
+echo.
+echo  To run the app locally, open TWO terminals:
+echo.
+echo  Terminal 1 (Backend):
+echo    call focusenv\Scripts\activate
+echo    uvicorn api.index:app --reload --port 8000
+echo.
+echo  Terminal 2 (Frontend):
+echo    cd frontend
+echo    npm run dev
 echo ================================================
 pause
