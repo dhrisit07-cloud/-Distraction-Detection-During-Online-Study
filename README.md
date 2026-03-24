@@ -63,8 +63,8 @@ Built in **Next.js**, the live dashboard shows:
 - **Audio nudges** via the Web Audio API if distraction persists beyond 5 seconds
 
 <!-- 📸 SCREENSHOT: Side-by-side of the Green "Focused" banner vs the Red "Distracted" alert banner -->
-![Alert Banners](screenshots/alert_banners.png)
-
+![Alert Banners](screenshots/alert_banner1.png)
+![Alert Banners](screenshots/alert_banner2.png)
 ---
 
 ## How It Works
@@ -88,8 +88,6 @@ React Hooks
 
 The Next.js frontend captures your webcam feed and sends aggressively compressed JPEG frames to the FastAPI backend at approximately 10 FPS. The backend routes each frame through MediaPipe and YOLO sequentially and returns a lightweight JSON payload describing your current focus state. The React frontend interprets the response and instantly updates the UI — no page reload, no lag.
 
-<!-- 📸 SCREENSHOT: Terminal/console showing the FastAPI backend running with live inference logs -->
-![Backend Running](screenshots/backend_inference.png)
 
 ---
 
@@ -202,8 +200,6 @@ The dashboard will be available at `http://localhost:3000`.
 5. If you look away, get drowsy, or pick up your phone, you'll receive an instant on-screen alert and an audio nudge (after 5 seconds of sustained distraction).
 6. Review your session summary — streak duration, average focus score, and distraction events — at the end of each session.
 
-<!-- 📸 SCREENSHOT: End-of-session summary screen showing streak, average score, and distraction breakdown -->
-![Session Summary](screenshots/session_summary.png)
 
 ---
 
